@@ -1,0 +1,17 @@
+hand_8\fast_sh_2_arm
+hand_8\mid_cy_4_arm
+hand_8\slow_yj_3_arm
+hand_front\fast_cy_3_arm
+hand_front\mid_cy_3_arm
+hand_front\slow_cy_3_arm
+hand_wave\fast_yj_4_arm
+hand_wave\mid_sh_3_arm
+hand_wave\slow_sh_1_arm
+walk_line\slow_yj_1_arm
+walk_line\slow_yj_2_arm
+walk_line\normal_yj_5_arm
+walk_line\normal_yj_5_leg
+walk_circle\slow_noswing_sh_3c_arm
+walk_circle\slow_noswing_sh_3c_leg
+walk_circle\normal_cy_1_arm
+walk_circle\normal_cy_1_leg
