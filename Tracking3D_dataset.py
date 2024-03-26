@@ -109,7 +109,7 @@ def load_hsh_datasets(imu_data_filename, gt_data_filename):
     mag_data = imu_data[:,6:9]
     #--0~2:center position 3~6:fixed quaternion 7~9:euler 10~13:common quaternion
     pos_data = gt_data[:, 0:3]
-    ori_data = gt_data[:, 3:7]
+    ori_data = gt_data[:, 10:14]
     # ori_data = gt_data[:, 3:7]
 
     return gyro_data, acc_data, mag_data, pos_data, ori_data
@@ -350,9 +350,7 @@ def load_dataset_9d_quat(gyro_data, acc_data, mag_data, pos_data, ori_data, wind
     #return x, [y_delta_p, y_delta_q], init_p, init_q
     return [x_gyro, x_acc, x_mag], [y_delta_p, y_delta_q], init_p, init_q
 
-
-# fixed odd stride problem
-def load_dataset_9d_quat_2(gyro_data, acc_data, mag_data, pos_data, ori_data, window_size=200, stride=10):
+def load_dataset_9d_quat_hsh(gyro_data, acc_data, mag_data, pos_data, ori_data, window_size=200, stride=10):
     init_p = pos_data[window_size//2 - stride//2, :]
     init_q = ori_data[window_size//2 - stride//2, :]
 
@@ -375,22 +373,20 @@ def load_dataset_9d_quat_2(gyro_data, acc_data, mag_data, pos_data, ori_data, wi
         q_a = quaternion.from_float_array(ori_data[idx + window_size//2 - stride//2, :])
         q_b = quaternion.from_float_array(ori_data[idx + window_size//2 + stride//2 + stride%2, :])
 
-        delta_p = np.matmul(quaternion.as_rotation_matrix(q_a).T, (p_b.T - p_a.T)).T
+        # delta_p = np.matmul(quaternion.as_rotation_matrix(q_a).T, (p_b.T - p_a.T)).T
+        delta_p = p_b - p_a
 
         delta_q = force_quaternion_uniqueness(q_a.conjugate() * q_b)
 
         y_delta_p.append(delta_p)
         y_delta_q.append(quaternion.as_float_array(delta_q))
 
-
-    #x = np.reshape(x, (len(x), x[0].shape[0], x[0].shape[1]))
     x_gyro = np.reshape(x_gyro, (len(x_gyro), x_gyro[0].shape[0], x_gyro[0].shape[1]))
     x_acc = np.reshape(x_acc, (len(x_acc), x_acc[0].shape[0], x_acc[0].shape[1]))
     x_mag = np.reshape(x_mag, (len(x_mag), x_mag[0].shape[0], x_mag[0].shape[1]))
     y_delta_p = np.reshape(y_delta_p, (len(y_delta_p), y_delta_p[0].shape[0]))
     y_delta_q = np.reshape(y_delta_q, (len(y_delta_q), y_delta_q[0].shape[0]))
 
-    #return x, [y_delta_p, y_delta_q], init_p, init_q
     return [x_gyro, x_acc, x_mag], [y_delta_p, y_delta_q], init_p, init_q
 
 def load_dataset_9d_tango(gyro_data, acc_data, mag_data, pos_data, ori_data, window_size=200, stride=10, samples=0):
